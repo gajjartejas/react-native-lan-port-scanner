@@ -55,7 +55,7 @@ public class LanPortScannerModule extends ReactContextBaseJavaModule {
         NetInfoUtils.reverseByteArray(ipAddressByteArray);
         InetAddress inetAddress = InetAddress.getByAddress(ipAddressByteArray);
         String ipAddress = inetAddress.getHostAddress();
-        map.putString("localIPAddress", ipAddress);
+        map.putString("ipAddress", ipAddress);
 
 
         //Get subnet
@@ -76,7 +76,7 @@ public class LanPortScannerModule extends ReactContextBaseJavaModule {
                         (mask >> 16 & 0xff),
                         (mask >> 8 & 0xff),
                         (mask & 0xff));
-        map.putString("localNetMask", subnet);
+        map.putString("subnetMask", subnet);
 
         promise.resolve(map);
       } catch (Exception e) {
