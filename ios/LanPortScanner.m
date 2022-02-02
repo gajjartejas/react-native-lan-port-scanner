@@ -48,8 +48,8 @@ RCT_EXPORT_METHOD(
                        inet_ntop(AF_INET, &((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr, str1, INET_ADDRSTRLEN);
                        subnet = [NSString stringWithUTF8String:str1];
               
-              [networkInfo setObject:address forKey:@"localIPAddress"];
-              [networkInfo setObject:subnet forKey:@"localNetMask"];
+              [networkInfo setObject:address forKey:@"ipAddress"];
+              [networkInfo setObject:subnet forKey:@"subnetMask"];
           }
         }
 
