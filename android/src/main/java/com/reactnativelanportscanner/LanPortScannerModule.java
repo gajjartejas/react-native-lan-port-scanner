@@ -13,7 +13,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
-import com.reactnativecommunity.netinfo.NetInfoUtils;
 
 import org.json.JSONObject;
 
