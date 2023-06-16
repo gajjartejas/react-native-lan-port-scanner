@@ -19,6 +19,8 @@ module.exports = {
       // Apply the recommended Typescript defaults and the prettier overrides to all Typescript files
       rules: {
         '@typescript-eslint/explicit-member-accessibility': 'off',
+        '@typescript-eslint/no-var-requires': 0,
+        '@typescript-eslint/no-explicit-any': 'off',
       },
     },
     {
