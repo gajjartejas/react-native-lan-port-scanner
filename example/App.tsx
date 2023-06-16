@@ -19,6 +19,7 @@ import LanPortScanner, {
 
 const Section: React.FC<{
   title: string;
+  children: any;
 }> = ({children, title}) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -58,18 +59,12 @@ const App = () => {
   const [subnetMask, setSubnetMask] = useState('');
   const [ports, setPorts] = useState('80, 443, 21, 22, 110, 995, 143, 993');
   const [progress, setProgress] = useState('');
-
   const [resultItems, setResultItems] = useState<LSSingleScanResult[]>([]);
 
-  const validateIPaddress = (ipaddress: string): boolean => {
-    if (
-      /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-        ipaddress,
-      )
-    ) {
-      return true;
-    }
-    return false;
+  const validateIPAddresses = (ipaddress: string): boolean => {
+    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+      ipaddress,
+    );
   };
 
   const getInfo = async () => {
@@ -89,13 +84,13 @@ const App = () => {
   const startScan = async () => {
     resetScan();
 
-    if (!validateIPaddress(ipAddress)) {
+    if (!validateIPAddresses(ipAddress)) {
       // @ts-ignore
       // eslint-disable-next-line no-alert
       alert('You have entered an invalid IP address!');
       return;
     }
-    if (!validateIPaddress(ipAddress)) {
+    if (!validateIPAddresses(ipAddress)) {
       // @ts-ignore
       // eslint-disable-next-line no-alert
       alert('You have entered an invalid subnet mask!');
