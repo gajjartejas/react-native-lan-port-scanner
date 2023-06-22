@@ -1,16 +1,20 @@
 import type { LSSingleScanResult } from './types';
-const net = require('react-native-tcp');
+
+import TcpSocket from 'react-native-tcp-socket';
 
 const scanHost = (
   hostIP: string,
   hostPort: number,
-  timeout: number
+  timeout: number,
+  logging: boolean
 ): Promise<LSSingleScanResult> => {
   return new Promise<LSSingleScanResult>((resolve, reject) => {
-    const client = net.createConnection(
-      { host: hostIP, port: hostPort, timeout },
+    const client = TcpSocket.createConnection(
+      { host: hostIP, port: hostPort },
       () => {
-        console.log('Connect -> Connected successfully.');
+        if(logging) {
+          console.log('Connect -> Connected successfully.');
+        }
 
         const scan_result: LSSingleScanResult = {
           ip: hostIP,
@@ -22,19 +26,25 @@ const scanHost = (
     );
 
     client.on('error', (error: any) => {
-      console.log('error-> ', error);
+      if(logging) {
+        console.log('error-> ', error);
+      }
 
       client.end();
       reject();
     });
 
     client.on('close', () => {
-      console.log('close -> Connection closed');
+      if(logging) {
+        console.log('close -> Connection closed');
+      }
       reject();
     });
 
     setTimeout(() => {
-      console.log('Timeout', hostIP);
+      if(logging) {
+        console.log('Timeout', hostIP);
+      }
 
       client.destroy();
       reject();

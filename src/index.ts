@@ -57,12 +57,15 @@ const startScan = (
   onFinish: (result: Types.LSSingleScanResult[]) => void
 ): void => {
   if (!config.networkInfo) {
-    console.warn('Input networkInfo is required.');
+    if(config.logging) {
+      console.warn('Input networkInfo is required.');
+    }
     return;
   }
 
   const ipRangeInfo = generateIPRange(config.networkInfo);
 
+  const logging = config.logging || false;
   const ipRange = ipRangeInfo.ipRange;
   const ports = config.ports ? config.ports : [80, 443];
   const timeout = config.timeout ? config.timeout : 1000;
@@ -81,7 +84,7 @@ const startScan = (
 
   const scanSingleHost = (info: Types.LSSingleScanConfig) => {
     return new Promise((resolve) => {
-      scanHost(info.ip, info.port, timeout)
+      scanHost(info.ip, info.port, timeout, logging)
         .then((result) => {
           resolve(result);
           hostScanned += 1;
@@ -102,7 +105,9 @@ const startScan = (
       onFinish(results.filter((v) => v) as Types.LSSingleScanResult[]);
     })
     .catch((v) => {
-      console.log(v);
+      if(logging) {
+        console.log(v);
+      }
     });
 };
 

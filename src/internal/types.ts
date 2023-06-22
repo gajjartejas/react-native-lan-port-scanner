@@ -27,6 +27,7 @@ export interface LSConfig {
   ports?: number[];
   timeout?: number;
   threads?: number;
+  logging?: boolean;
 }
 
 export interface LSSingleScanConfig {
