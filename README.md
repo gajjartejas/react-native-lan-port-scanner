@@ -31,6 +31,33 @@ after you have to install pods
 npx pod-install
 ```
 
+## For Android
+
+You have to add below permission to `AndroidManifest.xml` file
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+```
+
+## For iOS
+
+Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in case of insecure connection `info.plist`.
+
+```xml
+<dict>
+	<key>NSExceptionDomains</key>
+	<dict>
+		<key>localhost</key>
+		<dict>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+```
+
 ## Usage
 
 ### Scan network's hosts with specific ports
