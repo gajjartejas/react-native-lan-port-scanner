@@ -1,16 +1,31 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
 import scanHost from './internal/scanhost';
 import asyncPool from 'tiny-async-pool';
 import type * as Types from './internal/types';
 
-const { LanPortScannerModule } = NativeModules;
+const LINKING_ERROR =
+  `The package 'react-native-lan-port-scanner' doesn't seem to be linked. Make sure: \n\n` +
+  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  '- You rebuilt the app after installing the package\n' +
+  '- You are not using Expo Go\n';
+
+const LanPortScanner = NativeModules.LanPortScannerModule
+  ? NativeModules.LanPortScanner
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
 const sip = require('shift8-ip-func');
 const ipaddr = require('ipaddr.js');
 
 const getNetworkInfo = (): Promise<Types.LSNetworkInfo> => {
   return new Promise<Types.LSNetworkInfo>((resolve, reject) => {
-    LanPortScannerModule.getNetworkInfo()
+    LanPortScanner.getNetworkInfo()
       .then((result: Types.LSNetworkInfo) => {
         resolve(result);
       })
@@ -57,12 +72,15 @@ const startScan = (
   onFinish: (result: Types.LSSingleScanResult[]) => void
 ): void => {
   if (!config.networkInfo) {
-    console.warn('Input networkInfo is required.');
-    return;
+    if (config.logging) {
+      console.error('startScan->config->networkInfo param is required.');
+    }
+    throw new Error('config.networkInfo param is required.');
   }
 
   const ipRangeInfo = generateIPRange(config.networkInfo);
 
+  const logging = config.logging || false;
   const ipRange = ipRangeInfo.ipRange;
   const ports = config.ports ? config.ports : [80, 443];
   const timeout = config.timeout ? config.timeout : 1000;
@@ -81,7 +99,7 @@ const startScan = (
 
   const scanSingleHost = (info: Types.LSSingleScanConfig) => {
     return new Promise((resolve) => {
-      scanHost(info.ip, info.port, timeout)
+      scanHost(info.ip, info.port, timeout, logging)
         .then((result) => {
           resolve(result);
           hostScanned += 1;
@@ -101,8 +119,10 @@ const startScan = (
     .then((results) => {
       onFinish(results.filter((v) => v) as Types.LSSingleScanResult[]);
     })
-    .catch((v) => {
-      console.log(v);
+    .catch((e) => {
+      if (logging) {
+        console.error('scanSingleHost->error', e);
+      }
     });
 };
 

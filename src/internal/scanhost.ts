@@ -4,37 +4,53 @@ const net = require('react-native-tcp');
 const scanHost = (
   hostIP: string,
   hostPort: number,
-  timeout: number
+  timeout: number,
+  logging: boolean
 ): Promise<LSSingleScanResult> => {
   return new Promise<LSSingleScanResult>((resolve, reject) => {
     const client = net.createConnection(
-      { host: hostIP, port: hostPort, timeout },
+      { host: hostIP, port: hostPort },
       () => {
-        console.log('Connect -> Connected successfully.');
+        if (logging) {
+          console.log(
+            `scanHost->createConnection->host: ${hostIP} port: ${hostPort}`
+          );
+        }
 
-        const scan_result: LSSingleScanResult = {
+        const scanResult: LSSingleScanResult = {
           ip: hostIP,
           port: hostPort,
         };
-        resolve(scan_result);
+        resolve(scanResult);
         client.end();
       }
     );
 
     client.on('error', (error: any) => {
-      console.log('error-> ', error);
+      if (logging) {
+        console.log(
+          'scanHost->on error->host: ${hostIP} port: ${hostPort} error:',
+          error
+        );
+      }
 
       client.end();
       reject();
     });
 
     client.on('close', () => {
-      console.log('close -> Connection closed');
+      if (logging) {
+        console.log(`scanHost->on close->host: ${hostIP} port: ${hostPort}`);
+      }
       reject();
     });
 
     setTimeout(() => {
-      console.log('Timeout', hostIP);
+      if (logging) {
+        console.log(
+          `scanHost->force timeout->host: ${hostIP} port: ${hostPort}`
+        );
+      }
 
       client.destroy();
       reject();
