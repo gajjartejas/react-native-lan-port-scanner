@@ -10,7 +10,7 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 const LanPortScanner = NativeModules.LanPortScannerModule
-  ? NativeModules.LanPortScanner
+  ? NativeModules.LanPortScannerModule
   : new Proxy(
       {},
       {
