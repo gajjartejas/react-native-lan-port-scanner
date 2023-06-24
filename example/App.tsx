@@ -122,6 +122,7 @@ const App = () => {
       ports: portArray, //Specify port here
       timeout: 1000, //Timeout for each thread in ms
       threads: 150, //Number of threads
+      logging: true, //Enable logging
     };
     LanPortScanner.startScan(
       config,
