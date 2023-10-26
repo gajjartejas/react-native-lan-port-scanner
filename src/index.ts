@@ -78,7 +78,10 @@ const startScan = (
     throw new Error('config.networkInfo param is required.');
   }
 
-  const ipRangeInfo = "ipRange" in config.networkInfo ? config.networkInfo : generateIPRange(config.networkInfo);
+  const ipRangeInfo =
+    'ipRange' in config.networkInfo
+      ? config.networkInfo
+      : generateIPRange(config.networkInfo);
 
   const logging = config.logging || false;
   const ipRange = ipRangeInfo.ipRange;
