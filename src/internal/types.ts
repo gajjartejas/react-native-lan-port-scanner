@@ -25,6 +25,14 @@ export interface LSConfig {
   logging?: boolean;
 }
 
+export interface LSConfigExtra {
+  networkInfo: LSNetworkInfoExtra;
+  ports?: number[];
+  timeout?: number;
+  threads?: number;
+  logging?: boolean;
+}
+
 export interface LSSingleScanConfig {
   ip: string;
   port: number;
