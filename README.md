@@ -31,6 +31,32 @@ after you have to install pods
 npx pod-install
 ```
 
+## For Android
+
+You have to add below permission to `AndroidManifest.xml` file
+
+```xml
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+```
+
+## For iOS
+
+Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in case of insecure connection `info.plist`.
+
+```xml
+<dict>
+	<key>NSExceptionDomains</key>
+	<dict>
+		<key>localhost</key>
+		<dict>
+			<key>NSExceptionAllowsInsecureHTTPLoads</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+```
 
 ## Usage
 
@@ -98,16 +124,17 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 
 Used to scan multiple hosts/ports.
 
-| Property      | Type                      | Description                                          |
-| ------------- | ------------------------- | ---------------------------------------------------- |
-| `networkInfo` | `LSNetworkInfo`           | Contains ip address and subnet mask to scan.         |
-| `ports`       | `number[]` or `undefined` | Ports to scan default is: `[80, 443]`                |
-| `timeout`     | `number` or `undefined`   | Timeout for each thread in ms, default is: `1000 ms` |
-| `threads`     | `number` or `undefined`   | Number of threads, default is: `150`                 |
+| Property      | Type                      | Description                                       |
+| ------------- | ------------------------- | ------------------------------------------------- |
+| `networkInfo` | `LSNetworkInfo`           | Contains ip address and subnet mask to scan.      |
+| `ports`       | `number[]` or `undefined` | Ports to scan, default: `[80, 443]`               |
+| `timeout`     | `number` or `undefined`   | Timeout for each thread in ms, default: `1000 ms` |
+| `threads`     | `number` or `undefined`   | Number of threads, default: `150`                 |
+| `logging`     | `boolean`                 | Enable or disable logging, default: `false`       |
 
 #### `LSNetworkInfo`
 
-Used to grenerate ip ranges for scanning.
+Used to generate ip ranges for scanning.
 
 | Property     | Type     | Description |
 | ------------ | -------- | ----------- |
@@ -125,8 +152,8 @@ Contains ip ranges for scanning purpose.
 | `subnetConv`   | `string`   | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
 | `firstHost`    | `string`   | The network address for a given IPv4 interface and netmask in CIDR notation.       |
 | `lastHost `    | `string`   | The broadcast address for a given IPv4 interface and netmask in CIDR notation.     |
-| `firstHostHex` | `string`   | First host address in hex represantation.                                          |
-| `lastHostHex`  | `string`   | Last host address in hex represantation.                                           |
+| `firstHostHex` | `string`   | First host address in hex representation.                                          |
+| `lastHostHex`  | `string`   | Last host address in hex representation.                                           |
 | `ipRange`      | `string[]` | Array of ip addresses.                                                             |
 
 #### `LSSingleScanResult`
@@ -162,7 +189,6 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 #### `getNetworkInfo()`
 
 Takes `LSNetworkInfo` and scan all hosts for specified ports.
-
 
 #### `generateIPRange()`
 
