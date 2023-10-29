@@ -17,16 +17,9 @@ export interface LSSingleScanResult {
   port: number;
 }
 
-export interface LSConfig {
-  networkInfo: LSNetworkInfo;
-  ports?: number[];
-  timeout?: number;
-  threads?: number;
-  logging?: boolean;
-}
-
-export interface LSConfigExtra {
-  networkInfo: LSNetworkInfoExtra;
+export interface LSScanConfig {
+  networkInfo?: LSNetworkInfo;
+  ipRange?: string[];
   ports?: number[];
   timeout?: number;
   threads?: number;

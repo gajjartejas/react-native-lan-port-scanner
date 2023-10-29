@@ -63,19 +63,30 @@ Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` 
 ### Scan network's hosts with specific ports
 
 ```js
-import LanPortScanner, { LSConfig } from 'react-native-lan-port-scanner';
+import LanPortScanner, { LSScanConfig } from 'react-native-lan-port-scanner';
 
 //Returns `LSNetworkInfo`
 const networkInfo = await LanPortScanner.getNetworkInfo();
-
-let config: LSConfig = {
+const config1: LSScanConfig = {
   networkInfo: networkInfo,
   ports: [80, 8085], //Specify port here
   timeout: 1000, //Timeout for each thread in ms
   threads: 150, //Number of threads
 };
+
+//OR
+
+const ipRange = ['192.168.1.1', '192.168.1.112'];
+let config2: LSScanConfig = {
+  ipRange: ipRange, //If you provide this params then it will only scan provided ipRange.
+  ports: [80, 8085], //Specify port here
+  timeout: 1000, //Timeout for each thread in ms
+  threads: 150, //Number of threads
+};
+
+//Either config1 or config2 required
 LanPortScanner.startScan(
-  config,
+  config1, //or config2
   (totalHosts: number, hostScanned: number) => {
     console.log(hostScanned / totalHosts); //Show progress
   },
@@ -106,11 +117,11 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 
 - **Types:**
 
+  - [`LSScanConfig`](#LSScanConfig)
   - [`LSNetworkInfo`](#lsnetworkinfo)
   - [`LSNetworkInfoExtra`](#lsnetworkinfoextra)
   - [`LSSingleScanResult`](#lssinglescanresult)
   - [`LSScanResult`](#lsscanresult)
-  - [`LSConfig`](#lsconfig)
 
 - **Methods:**
   - [`getNetworkInfo()`](#getnetworkinfo)
@@ -120,7 +131,7 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 
 ### Types
 
-#### `LSConfig`
+#### `LSScanConfig`
 
 Used to scan multiple hosts/ports.
 
@@ -208,7 +219,7 @@ Scan single host with port, returns `LSSingleScanResult`
 **Example:**
 
 ```javascript
-let result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
+const result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
 ```
 
 ## Contributing
