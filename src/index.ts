@@ -66,7 +66,7 @@ const generateIPRange = (
 };
 
 const startScan = (
-  config: Types.LSConfig | Types.LSConfigExtra,
+  config: Types.LSScanConfig,
   onProgress: (totalHosts: number, hostScanned: number) => void,
   onHostFound: (host: Types.LSSingleScanResult | null) => void,
   onFinish: (result: Types.LSSingleScanResult[]) => void
@@ -78,13 +78,21 @@ const startScan = (
     throw new Error('config.networkInfo param is required.');
   }
 
-  const ipRangeInfo =
-    'ipRange' in config.networkInfo
-      ? config.networkInfo
-      : generateIPRange(config.networkInfo);
+  if (!config.networkInfo || !config.ipRange) {
+    if (config.logging) {
+      console.error(
+        'startScan->config->either networkInfo.networkInfo or networkInfo.ipRange param is required.'
+      );
+    }
+    throw new Error(
+      'either networkInfo.networkInfo or networkInfo.ipRange param is required.'
+    );
+  }
 
   const logging = config.logging || false;
-  const ipRange = ipRangeInfo.ipRange;
+  const ipRange = config.ipRange
+    ? config.ipRange
+    : generateIPRange(config.networkInfo).ipRange;
   const ports = config.ports ? config.ports : [80, 443];
   const timeout = config.timeout ? config.timeout : 1000;
   const threads = config.threads ? config.threads : 50;
