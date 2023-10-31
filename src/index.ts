@@ -70,7 +70,8 @@ const startScan = (
   onProgress: (totalHosts: number, hostScanned: number) => void,
   onHostFound: (host: Types.LSSingleScanResult | null) => void,
   onFinish: (result: Types.LSSingleScanResult[]) => void
-): void => {
+): Types.CancelScan => {
+  let scanCancelled = false;
   if (!config.networkInfo && !config.ipRange) {
     if (config.logging) {
       console.error(
@@ -107,19 +108,23 @@ const startScan = (
 
   const scanSingleHost = (info: Types.LSSingleScanConfig) => {
     return new Promise((resolve) => {
-      scanHost(info.ip, info.port, timeout, logging)
-        .then((result) => {
-          resolve(result);
-          hostScanned += 1;
-          onProgress(totalHosts, hostScanned);
-          onHostFound(result);
-        })
-        .catch(() => {
-          resolve(null);
-          hostScanned += 1;
-          onProgress(totalHosts, hostScanned);
-          onHostFound(null);
-        });
+      if (!scanCancelled) {
+        scanHost(info.ip, info.port, timeout, logging)
+          .then((result) => {
+            resolve(result);
+            hostScanned += 1;
+            onProgress(totalHosts, hostScanned);
+            onHostFound(result);
+          })
+          .catch(() => {
+            resolve(null);
+            hostScanned += 1;
+            onProgress(totalHosts, hostScanned);
+            onHostFound(null);
+          });
+      } else {
+        resolve(null);
+      }
     });
   };
 
@@ -132,6 +137,10 @@ const startScan = (
         console.error('scanSingleHost->error', e);
       }
     });
+
+  return () => {
+    scanCancelled = true;
+  };
 };
 
 export * from './internal/types';
