@@ -30,3 +30,5 @@ export interface LSSingleScanConfig {
   ip: string;
   port: number;
 }
+
+export type CancelScan = () => void;
