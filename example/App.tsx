@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import LanPortScanner, {
+  CancelScan,
   LSScanConfig,
   LSSingleScanResult,
 } from 'react-native-lan-port-scanner';
@@ -40,12 +41,14 @@ const backgroundStyle = {
 
 const App = () => {
   const resultsRef = useRef<LSSingleScanResult[]>([]);
+  const cancelScanRef = useRef<CancelScan | null>(null);
 
   const [ipAddress, setIPAddress] = useState('');
   const [subnetMask, setSubnetMask] = useState('');
   const [ports, setPorts] = useState('80, 443, 21, 22, 110, 995, 143, 993');
   const [progress, setProgress] = useState('');
   const [resultItems, setResultItems] = useState<LSSingleScanResult[]>([]);
+  const [scanning, setScanning] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -107,23 +110,31 @@ const App = () => {
       threads: 150, //Number of threads
       logging: true, //Enable logging
     };
-    LanPortScanner.startScan(
+    setScanning(true);
+    cancelScanRef.current = LanPortScanner.startScan(
       config,
       (totalHosts: number, hostScanned: number) => {
         setProgress(`${((hostScanned * 100) / totalHosts).toFixed(2)}`);
       },
-      result => {
+      (result: LSSingleScanResult | null) => {
         if (result) {
           resultsRef.current.push(result);
           setResultItems([...resultsRef.current]);
           console.log(result); //This will call after new ip/port found.
         }
       },
-      results => {
+      (results: LSSingleScanResult[]) => {
         console.log(results); // This will call after scan end.
         setProgress('Finished!');
+        setScanning(false);
       },
     );
+  };
+
+  const cancelScan = () => {
+    if (cancelScanRef.current) {
+      cancelScanRef.current();
+    }
   };
 
   return (
@@ -154,9 +165,17 @@ const App = () => {
             style={styles.textinput}
           />
 
-          <TouchableOpacity style={styles.button} onPress={startScan}>
-            <Text style={styles.buttonText}>{'Start Scan'}</Text>
-          </TouchableOpacity>
+          {!scanning && (
+            <TouchableOpacity style={styles.button} onPress={startScan}>
+              <Text style={styles.buttonText}>{'Start Scan'}</Text>
+            </TouchableOpacity>
+          )}
+
+          {scanning && (
+            <TouchableOpacity style={styles.button} onPress={cancelScan}>
+              <Text style={styles.buttonText}>{'Cancel Scan'}</Text>
+            </TouchableOpacity>
+          )}
 
           {!!progress && (
             <Text style={styles.progress}>{`Progress: ${progress}`}</Text>
