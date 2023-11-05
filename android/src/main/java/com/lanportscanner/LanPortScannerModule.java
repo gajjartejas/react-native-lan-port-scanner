@@ -2,18 +2,18 @@ package com.lanportscanner;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.telephony.TelephonyManager;
-import androidx.annotation.NonNull;
-import org.json.JSONObject;
+
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -25,7 +25,7 @@ public class LanPortScannerModule extends ReactContextBaseJavaModule {
 
   private static ReactApplicationContext reactContext;
 
-  public LanPortScannerModule(ReactApplicationContext reactContext) {
+  public LanPortScannerModule(ReactApplicationContext context) {
     super(reactContext);
     reactContext = context;
   }
