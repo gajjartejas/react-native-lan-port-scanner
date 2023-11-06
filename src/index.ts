@@ -1,6 +1,10 @@
 import { NativeModules, Platform } from 'react-native';
 import scanHost from './internal/scanhost';
 import asyncPool from 'tiny-async-pool';
+// @ts-ignore
+import sip from 'shift8-ip-func';
+import ipaddr from 'ipaddr.js';
+
 import type * as Types from './internal/types';
 
 const LINKING_ERROR =
@@ -9,8 +13,8 @@ const LINKING_ERROR =
   '- You rebuilt the app after installing the package\n' +
   '- You are not using Expo Go\n';
 
-const LanPortScanner = NativeModules.LanPortScannerModule
-  ? NativeModules.LanPortScannerModule
+const LanPortScanner = NativeModules.LanPortScanner
+  ? NativeModules.LanPortScanner
   : new Proxy(
       {},
       {
@@ -19,9 +23,6 @@ const LanPortScanner = NativeModules.LanPortScannerModule
         },
       }
     );
-
-const sip = require('shift8-ip-func');
-const ipaddr = require('ipaddr.js');
 
 const getNetworkInfo = (): Promise<Types.LSNetworkInfo> => {
   return new Promise<Types.LSNetworkInfo>((resolve, reject) => {
@@ -55,8 +56,8 @@ const generateIPRange = (
 
   return {
     subnetConv: subconv,
-    firstHost: firstHost,
-    lastHost: lastHost,
+    firstHost: firstHost.toString(),
+    lastHost: lastHost.toString(),
     firstHostHex: firstHostHex,
     lastHostHex: lastHostHex,
     ipRange: ipRange,
@@ -102,7 +103,7 @@ const startScan = (
 
   for (let i = 0; i < ipRange.length; i++) {
     for (let j = 0; j < ports.length; j++) {
-      allIPs.push({ ip: ipRange[i], port: ports[j] });
+      allIPs.push({ ip: ipRange[i]!, port: ports[j]! });
     }
   }
 

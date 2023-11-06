@@ -13,7 +13,8 @@ A simple port scanner for react native.
 
 ## Installation
 
-This package requires [react-native-tcp](https://github.com/gajjartejas/react-native-tcp) as dependency. Please follow below steps to install:
+This package requires [react-native-tcp](https://github.com/gajjartejas/react-native-tcp) as dependency. Please follow
+below steps to install:
 
 ```sh
 yarn add gajjartejas/react-native-tcp react-native-lan-port-scanner
@@ -36,25 +37,28 @@ npx pod-install
 You have to add below permission to `AndroidManifest.xml` file
 
 ```xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 ```
 
 ## For iOS
 
-Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in case of insecure connection `info.plist`.
+Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in case of insecure
+connection `info.plist`.
 
 ```xml
+
 <dict>
-	<key>NSExceptionDomains</key>
-	<dict>
-		<key>localhost</key>
-		<dict>
-			<key>NSExceptionAllowsInsecureHTTPLoads</key>
-			<true/>
-		</dict>
-	</dict>
+  <key>NSExceptionDomains</key>
+  <dict>
+    <key>localhost</key>
+    <dict>
+      <key>NSExceptionAllowsInsecureHTTPLoads</key>
+      <true/>
+    </dict>
+  </dict>
 </dict>
 ```
 
@@ -136,7 +140,7 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 Used to scan multiple hosts/ports.
 
 | Property      | Type                      | Description                                       |
-| ------------- | ------------------------- | ------------------------------------------------- |
+|---------------|---------------------------|---------------------------------------------------|
 | `networkInfo` | `LSNetworkInfo`           | Contains ip address and subnet mask to scan.      |
 | `ports`       | `number[]` or `undefined` | Ports to scan, default: `[80, 443]`               |
 | `timeout`     | `number` or `undefined`   | Timeout for each thread in ms, default: `1000 ms` |
@@ -148,7 +152,7 @@ Used to scan multiple hosts/ports.
 Used to generate ip ranges for scanning.
 
 | Property     | Type     | Description |
-| ------------ | -------- | ----------- |
+|--------------|----------|-------------|
 | `ipAddress`  | `string` | IP Address  |
 | `subnetMask` | `string` | Subnet mask |
 
@@ -156,23 +160,23 @@ Used to generate ip ranges for scanning.
 
 Contains ip ranges for scanning purpose.
 
-| Property       | Type       | Description                                                                        |
-| -------------- | ---------- | ---------------------------------------------------------------------------------- |
-| `ipAddress`    | `string`   | IP Address                                                                         |
-| `subnetMask`   | `string`   | Subnet mask.                                                                       |
-| `subnetConv`   | `string`   | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
-| `firstHost`    | `string`   | The network address for a given IPv4 interface and netmask in CIDR notation.       |
-| `lastHost `    | `string`   | The broadcast address for a given IPv4 interface and netmask in CIDR notation.     |
-| `firstHostHex` | `string`   | First host address in hex representation.                                          |
-| `lastHostHex`  | `string`   | Last host address in hex representation.                                           |
-| `ipRange`      | `string[]` | Array of ip addresses.                                                             |
+| Property       | Type             | Description                                                                        |
+|----------------|------------------|------------------------------------------------------------------------------------|
+| `ipAddress`    | `string`         | IP Address                                                                         |
+| `subnetMask`   | `string`         | Subnet mask.                                                                       |
+| `subnetConv`   | `string or null` | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
+| `firstHost`    | `string`         | The network address for a given IPv4 interface and netmask in CIDR notation.       |
+| `lastHost `    | `string`         | The broadcast address for a given IPv4 interface and netmask in CIDR notation.     |
+| `firstHostHex` | `string`         | First host address in hex representation.                                          |
+| `lastHostHex`  | `string`         | Last host address in hex representation.                                           |
+| `ipRange`      | `string[]`       | Array of ip addresses.                                                             |
 
 #### `LSSingleScanResult`
 
 Returns after host/port found.
 
 | Property | Type     | Description |
-| -------- | -------- | ----------- |
+|----------|----------|-------------|
 | `ip`     | `string` | IP Address  |
 | `port`   | `number` | Subnet mask |
 
@@ -181,7 +185,7 @@ Returns after host/port found.
 Returns after scan complete.
 
 | Property | Type       | Description |
-| -------- | ---------- | ----------- |
+|----------|------------|-------------|
 | `ip`     | `string`   | IP Address  |
 | `ports`  | `number[]` | Subnet mask |
 
@@ -232,9 +236,15 @@ MIT
 
 ## Credits
 
-[Shift8 Web](https://shift8web.ca/2019/03/how-to-build-a-port-scanner-with-javascript-using-react-native/) for awsome tutorial.
+[Shift8 Web](https://shift8web.ca/2019/03/how-to-build-a-port-scanner-with-javascript-using-react-native/) for awsome
+tutorial.
 
 [react-native-netinfo](https://github.com/react-native-netinfo/react-native-netinfo) by [The React Native Community
 ](https://reactnative.dev/help)
 
-<a href="https://www.flaticon.com/free-icons/local-area" title="local area icons">Local area icons created by Eucalyp - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/local-area" title="local area icons">Local area icons created by Eucalyp -
+Flaticon</a>
+
+---
+
+Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)

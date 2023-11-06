@@ -4,7 +4,7 @@ export interface LSNetworkInfo {
 }
 
 export interface LSNetworkInfoExtra extends LSNetworkInfo {
-  subnetConv: string;
+  subnetConv: number | null;
   firstHost: string;
   lastHost: string;
   firstHostHex: string;
