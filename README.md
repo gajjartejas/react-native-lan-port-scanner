@@ -89,7 +89,7 @@ let config2: LSScanConfig = {
 };
 
 //Either config1 or config2 required
-LanPortScanner.startScan(
+const cancelScanHandle = LanPortScanner.startScan(
   config1, //or config2
   (totalHosts: number, hostScanned: number) => {
     console.log(hostScanned / totalHosts); //Show progress
@@ -101,6 +101,9 @@ LanPortScanner.startScan(
     console.log(results); // This will call after scan end.
   }
 );
+
+//You can cancel scan later
+cancelScanHandle();
 ```
 
 ### To scan specific host with port
@@ -140,7 +143,7 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 Used to scan multiple hosts/ports.
 
 | Property      | Type                      | Description                                       |
-|---------------|---------------------------|---------------------------------------------------|
+| ------------- | ------------------------- | ------------------------------------------------- |
 | `networkInfo` | `LSNetworkInfo`           | Contains ip address and subnet mask to scan.      |
 | `ports`       | `number[]` or `undefined` | Ports to scan, default: `[80, 443]`               |
 | `timeout`     | `number` or `undefined`   | Timeout for each thread in ms, default: `1000 ms` |
@@ -152,7 +155,7 @@ Used to scan multiple hosts/ports.
 Used to generate ip ranges for scanning.
 
 | Property     | Type     | Description |
-|--------------|----------|-------------|
+| ------------ | -------- | ----------- |
 | `ipAddress`  | `string` | IP Address  |
 | `subnetMask` | `string` | Subnet mask |
 
@@ -161,7 +164,7 @@ Used to generate ip ranges for scanning.
 Contains ip ranges for scanning purpose.
 
 | Property       | Type             | Description                                                                        |
-|----------------|------------------|------------------------------------------------------------------------------------|
+| -------------- | ---------------- | ---------------------------------------------------------------------------------- |
 | `ipAddress`    | `string`         | IP Address                                                                         |
 | `subnetMask`   | `string`         | Subnet mask.                                                                       |
 | `subnetConv`   | `string or null` | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
@@ -176,7 +179,7 @@ Contains ip ranges for scanning purpose.
 Returns after host/port found.
 
 | Property | Type     | Description |
-|----------|----------|-------------|
+| -------- | -------- | ----------- |
 | `ip`     | `string` | IP Address  |
 | `port`   | `number` | Subnet mask |
 
@@ -185,7 +188,7 @@ Returns after host/port found.
 Returns after scan complete.
 
 | Property | Type       | Description |
-|----------|------------|-------------|
+| -------- | ---------- | ----------- |
 | `ip`     | `string`   | IP Address  |
 | `ports`  | `number[]` | Subnet mask |
 
