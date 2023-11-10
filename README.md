@@ -103,7 +103,9 @@ const cancelScanHandle = LanPortScanner.startScan(
 );
 
 //You can cancel scan later
-cancelScanHandle();
+setTimeout(() => {
+  cancelScanHandle();
+}, 5000);
 ```
 
 ### To scan specific host with port
@@ -228,6 +230,10 @@ Scan single host with port, returns `LSSingleScanResult`
 ```javascript
 const result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
 ```
+
+## TODO
+- Better scan handling and canceling.
+- Add abort signal for cancelling.
 
 ## Contributing
 
