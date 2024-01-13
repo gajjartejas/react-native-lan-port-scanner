@@ -3,13 +3,9 @@
 #import <CoreTelephony/CTCarrier.h>
 #include <ifaddrs.h>
 #include <arpa/inet.h>
+
 @implementation LanPortScanner
-
-NSString * const TYPE_ANY = @"any";
-NSString * const TYPE_CONFIGURATION = @"config";
-NSString * const TYPE_TELEPHONY = @"telephony";
-
-RCT_EXPORT_MODULE(LanPortScannerModule);
+RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(
                   getNetworkInfo:(RCTPromiseResolveBlock)resolve
@@ -43,11 +39,11 @@ RCT_EXPORT_METHOD(
             char str[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, &((struct sockaddr_in *)temp_addr->ifa_addr)->sin_addr, str, INET_ADDRSTRLEN);
             address = [NSString stringWithUTF8String:str];
-           
+
               char str1[INET_ADDRSTRLEN];
                        inet_ntop(AF_INET, &((struct sockaddr_in *)temp_addr->ifa_netmask)->sin_addr, str1, INET_ADDRSTRLEN);
                        subnet = [NSString stringWithUTF8String:str1];
-              
+
               [networkInfo setObject:address forKey:@"ipAddress"];
               [networkInfo setObject:subnet forKey:@"subnetMask"];
           }
@@ -60,6 +56,5 @@ RCT_EXPORT_METHOD(
     freeifaddrs(interfaces);
       resolve(networkInfo);
 }
-
 
 @end

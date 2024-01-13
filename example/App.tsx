@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -6,14 +6,13 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
   TouchableOpacity,
 } from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 import LanPortScanner, {
-  LSConfig,
+  CancelScan,
+  LSScanConfig,
   LSSingleScanResult,
 } from 'react-native-lan-port-scanner';
 
@@ -21,60 +20,45 @@ const Section: React.FC<{
   title: string;
   children: any;
 }> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+      <Text style={[styles.sectionTitle]}>{title}</Text>
+      <Text style={[styles.sectionDescription]}>{children}</Text>
     </View>
   );
 };
 
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-  const resultsRef = useRef<LSSingleScanResult[]>([]);
+const validateIPAddresses = (ipaddress: string): boolean => {
+  return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+    ipaddress,
+  );
+};
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-    flex: 1,
-  };
+const backgroundStyle = {
+  backgroundColor: 'white',
+  flex: 1,
+};
+
+const App = () => {
+  const resultsRef = useRef<LSSingleScanResult[]>([]);
+  const cancelScanRef = useRef<CancelScan | null>(null);
 
   const [ipAddress, setIPAddress] = useState('');
   const [subnetMask, setSubnetMask] = useState('');
   const [ports, setPorts] = useState('80, 443, 21, 22, 110, 995, 143, 993');
   const [progress, setProgress] = useState('');
   const [resultItems, setResultItems] = useState<LSSingleScanResult[]>([]);
+  const [scanning, setScanning] = useState<boolean>(false);
 
-  const validateIPAddresses = (ipaddress: string): boolean => {
-    return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-      ipaddress,
-    );
-  };
+  useEffect(() => {
+    (async () => {
+      const networkInfo = await LanPortScanner.getNetworkInfo();
 
-  const getInfo = async () => {
-    //Returns `LSNetworkInfo`
-    const networkInfo = await LanPortScanner.getNetworkInfo();
-
-    //Set values
-    setIPAddress(networkInfo.ipAddress);
-    setSubnetMask(networkInfo.subnetMask);
-  };
+      //Set values
+      setIPAddress(networkInfo.ipAddress);
+      setSubnetMask(networkInfo.subnetMask);
+    })();
+  }, []);
 
   const resetScan = () => {
     resultsRef.current = [];
@@ -117,34 +101,45 @@ const App = () => {
       subnetMask: subnetMask,
     };
 
-    let config: LSConfig = {
+    //Either provide networkInfo or ipRange
+    let config: LSScanConfig = {
       networkInfo: networkInfo,
+      //ipRange: ['192.168.1.1'],
       ports: portArray, //Specify port here
       timeout: 1000, //Timeout for each thread in ms
       threads: 150, //Number of threads
+      logging: true, //Enable logging
     };
-    LanPortScanner.startScan(
+    setScanning(true);
+    cancelScanRef.current = LanPortScanner.startScan(
       config,
       (totalHosts: number, hostScanned: number) => {
         setProgress(`${((hostScanned * 100) / totalHosts).toFixed(2)}`);
       },
-      result => {
+      (result: LSSingleScanResult | null) => {
         if (result) {
           resultsRef.current.push(result);
           setResultItems([...resultsRef.current]);
           console.log(result); //This will call after new ip/port found.
         }
       },
-      results => {
+      (results: LSSingleScanResult[]) => {
         console.log(results); // This will call after scan end.
-        setProgress('');
+        setProgress('Finished!');
+        setScanning(false);
       },
     );
   };
 
+  const cancelScan = () => {
+    if (cancelScanRef.current) {
+      cancelScanRef.current();
+    }
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle={'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
@@ -169,16 +164,21 @@ const App = () => {
             value={ports}
             style={styles.textinput}
           />
-          <TouchableOpacity style={styles.button} onPress={getInfo}>
-            <Text style={styles.buttonText}>{'Get Info'}</Text>
-          </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={startScan}>
-            <Text style={styles.buttonText}>{'Start Scan'}</Text>
-          </TouchableOpacity>
+          {!scanning && (
+            <TouchableOpacity style={styles.button} onPress={startScan}>
+              <Text style={styles.buttonText}>{'Start Scan'}</Text>
+            </TouchableOpacity>
+          )}
+
+          {scanning && (
+            <TouchableOpacity style={styles.button} onPress={cancelScan}>
+              <Text style={styles.buttonText}>{'Cancel Scan'}</Text>
+            </TouchableOpacity>
+          )}
 
           {!!progress && (
-            <Text style={styles.progress}>{`Prgoress: ${progress}`}</Text>
+            <Text style={styles.progress}>{`Progress: ${progress}`}</Text>
           )}
 
           {resultItems.map(item => {

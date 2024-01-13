@@ -4,7 +4,7 @@ export interface LSNetworkInfo {
 }
 
 export interface LSNetworkInfoExtra extends LSNetworkInfo {
-  subnetConv: string;
+  subnetConv: number | null;
   firstHost: string;
   lastHost: string;
   firstHostHex: string;
@@ -17,13 +17,9 @@ export interface LSSingleScanResult {
   port: number;
 }
 
-export interface LSScanResult {
-  ip: string;
-  ports: number[];
-}
-
-export interface LSConfig {
-  networkInfo: LSNetworkInfo;
+export interface LSScanConfig {
+  networkInfo?: LSNetworkInfo;
+  ipRange?: string[];
   ports?: number[];
   timeout?: number;
   threads?: number;
@@ -34,3 +30,5 @@ export interface LSSingleScanConfig {
   ip: string;
   port: number;
 }
+
+export type CancelScan = () => void;

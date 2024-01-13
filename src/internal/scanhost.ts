@@ -16,18 +16,21 @@ const scanHost = (
           console.log('Connect -> Connected successfully.');
         }
 
-        const scan_result: LSSingleScanResult = {
+        const scanResult: LSSingleScanResult = {
           ip: hostIP,
           port: hostPort,
         };
-        resolve(scan_result);
+        resolve(scanResult);
         client.end();
       }
     );
 
     client.on('error', (error: any) => {
-      if(logging) {
-        console.log('error-> ', error);
+      if (logging) {
+        console.log(
+          'scanHost->on error->host: ${hostIP} port: ${hostPort} error:',
+          error
+        );
       }
 
       client.end();
@@ -35,15 +38,17 @@ const scanHost = (
     });
 
     client.on('close', () => {
-      if(logging) {
-        console.log('close -> Connection closed');
+      if (logging) {
+        console.log(`scanHost->on close->host: ${hostIP} port: ${hostPort}`);
       }
       reject();
     });
 
     setTimeout(() => {
-      if(logging) {
-        console.log('Timeout', hostIP);
+      if (logging) {
+        console.log(
+          `scanHost->force timeout->host: ${hostIP} port: ${hostPort}`
+        );
       }
 
       client.destroy();
