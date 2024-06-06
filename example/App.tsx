@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
@@ -32,11 +31,6 @@ const validateIPAddresses = (ipaddress: string): boolean => {
   return /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
     ipaddress,
   );
-};
-
-const backgroundStyle = {
-  backgroundColor: 'white',
-  flex: 1,
 };
 
 const App = () => {
@@ -114,7 +108,7 @@ const App = () => {
     cancelScanRef.current = LanPortScanner.startScan(
       config,
       (totalHosts: number, hostScanned: number) => {
-        setProgress(`${((hostScanned * 100) / totalHosts).toFixed(2)}`);
+        setProgress(`${((hostScanned * 100) / totalHosts).toFixed(2)}%`);
       },
       (result: LSSingleScanResult | null) => {
         if (result) {
@@ -138,12 +132,9 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View style={backgroundStyle}>
+    <SafeAreaView style={styles.backgroundStyle}>
+      <ScrollView style={styles.backgroundStyle}>
+        <View style={styles.backgroundStyle}>
           <Text style={styles.inputHeader}>{'Local IP:'}</Text>
           <TextInput
             onChangeText={setIPAddress}
@@ -195,6 +186,10 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
+  backgroundStyle: {
+    backgroundColor: 'white',
+    flex: 1,
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
@@ -202,14 +197,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
+    color: 'black',
   },
   sectionDescription: {
     marginTop: 8,
     fontSize: 18,
     fontWeight: '400',
+    color: 'black',
   },
   highlight: {
     fontWeight: '700',
+    color: 'black',
   },
   textinput: {
     height: 40,
@@ -219,15 +217,18 @@ const styles = StyleSheet.create({
     marginTop: 4,
     borderColor: '#cccccc',
     borderRadius: 8,
+    color: 'black',
   },
   inputHeader: {
     marginHorizontal: 20,
     fontSize: 16,
     fontWeight: '400',
     marginTop: 16,
+    color: 'black',
   },
   progress: {
     alignSelf: 'center',
+    color: 'black',
   },
   button: {
     backgroundColor: '#cc6555',
