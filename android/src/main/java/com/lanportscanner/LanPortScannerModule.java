@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Locale;
 
 @ReactModule(name = LanPortScannerModule.NAME)
-public class LanPortScannerModule extends ReactContextBaseJavaModule {
+public class LanPortScannerModule extends NativeLanPortScannerSpec {
     public static final String NAME = "LanPortScanner";
 
-    private static ReactApplicationContext reactContext;
+    private final ReactApplicationContext reactContext;
 
     public LanPortScannerModule(ReactApplicationContext context) {
-        super(reactContext);
+        super(context);
         reactContext = context;
     }
 
@@ -38,53 +38,56 @@ public class LanPortScannerModule extends ReactContextBaseJavaModule {
         return NAME;
     }
 
-    @ReactMethod
+    @Override
     public void getNetworkInfo(Promise promise) {
         WritableMap map = Arguments.createMap();
 
-        // Get the IP address
-        WifiManager mWifiManager = (WifiManager)
-                reactContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        try {
+            // Get the IP address
+            WifiManager mWifiManager = (WifiManager)
+                    reactContext.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
-        if (wifiInfo != null) {
-            try {
-                byte[] ipAddressByteArray =
-                        BigInteger.valueOf(wifiInfo.getIpAddress()).toByteArray();
-                NetInfoUtils.reverseByteArray(ipAddressByteArray);
-                InetAddress inetAddress = InetAddress.getByAddress(ipAddressByteArray);
-                String ipAddress = inetAddress.getHostAddress();
-                map.putString("ipAddress", ipAddress);
+            if (mWifiManager != null) {
+                WifiInfo wifiInfo = mWifiManager.getConnectionInfo();
+                if (wifiInfo != null) {
+                    byte[] ipAddressByteArray =
+                            BigInteger.valueOf(wifiInfo.getIpAddress()).toByteArray();
+                    NetInfoUtils.reverseByteArray(ipAddressByteArray);
+                    InetAddress inetAddress = InetAddress.getByAddress(ipAddressByteArray);
+                    String ipAddress = inetAddress.getHostAddress();
+                    map.putString("ipAddress", ipAddress);
 
-                NetworkInterface netAddress = NetworkInterface.getByInetAddress(inetAddress);
+                    NetworkInterface netAddress = NetworkInterface.getByInetAddress(inetAddress);
+                    if (netAddress != null) {
+                        //Get subnet
+                        List<InterfaceAddress> addresses = netAddress.getInterfaceAddresses();
 
-                //Get subnet
-                List<InterfaceAddress> addresses = netAddress.getInterfaceAddresses();
+                        short networkPrefixLength = 0;
+                        for (InterfaceAddress address : addresses) {
+                            boolean isIpV4 = address.getAddress().getAddress().length == 4;
+                            if (isIpV4) {
+                                networkPrefixLength = address.getNetworkPrefixLength();
+                                break;
+                            }
+                        }
 
-                short networkPrefixLength = 0;
-                for (InterfaceAddress address : addresses) {
-                    boolean isIpV4 = address.getAddress().getAddress().length == 4;
-                    if (isIpV4) {
-                        networkPrefixLength = address.getNetworkPrefixLength();
-                        break;
+                        int mask = 0xffffffff << (32 - networkPrefixLength);
+                        String subnet = String.format(
+                                Locale.US,
+                                "%d.%d.%d.%d",
+                                (mask >> 24 & 0xff),
+                                (mask >> 16 & 0xff),
+                                (mask >> 8 & 0xff),
+                                (mask & 0xff));
+
+                        map.putString("subnetMask", subnet);
                     }
                 }
-
-                int mask = 0xffffffff << (32 - networkPrefixLength);
-                String subnet = String.format(
-                        Locale.US,
-                        "%d.%d.%d.%d",
-                        (mask >> 24 & 0xff),
-                        (mask >> 16 & 0xff),
-                        (mask >> 8 & 0xff),
-                        (mask & 0xff));
-
-                map.putString("subnetMask", subnet);
-
-                promise.resolve(map);
-            } catch (Exception e) {
-                // Ignore errors
             }
+            promise.resolve(map);
+
+        } catch (Exception e) {
+            promise.reject("ERROR", e.getMessage());
         }
     }
 }

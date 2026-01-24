@@ -167,5 +167,10 @@
         }
       ]
     ]
+  },
+  "codegenConfig": {
+    "name": "RNLanPortScannerSpec",
+    "type": "modules",
+    "jsSrcsDir": "src"
   }
 }

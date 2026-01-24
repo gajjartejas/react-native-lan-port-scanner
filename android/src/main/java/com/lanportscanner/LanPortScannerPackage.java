@@ -11,18 +11,33 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LanPortScannerPackage implements ReactPackage {
-  @NonNull
+public class LanPortScannerPackage extends TurboReactPackage {
+  @Nullable
   @Override
-  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
-    List<NativeModule> modules = new ArrayList<>();
-    modules.add(new LanPortScannerModule(reactContext));
-    return modules;
+  public NativeModule getModule(String name, ReactApplicationContext reactContext) {
+    if (name.equals(LanPortScannerModule.NAME)) {
+      return new LanPortScannerModule(reactContext);
+    }
+    return null;
   }
 
-  @NonNull
   @Override
-  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
-    return Collections.emptyList();
+  public ReactModuleInfoProvider getReactModuleInfoProvider() {
+    return () -> {
+      final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
+      boolean isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+      moduleInfos.put(
+          LanPortScannerModule.NAME,
+          new ReactModuleInfo(
+              LanPortScannerModule.NAME,
+              LanPortScannerModule.NAME,
+              false, // canOverrideExistingModule
+              false, // needsEagerInit
+              false, // hasConstants
+              false, // isCxxModule
+              isTurboModule // isTurboModule
+          ));
+      return moduleInfos;
+    };
   }
 }
