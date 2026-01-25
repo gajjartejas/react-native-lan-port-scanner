@@ -17,12 +17,11 @@ RCT_EXPORT_METHOD(getNetworkInfo : (RCTPromiseResolveBlock)
   struct ifaddrs *temp_addr = NULL;
 
   int success = getifaddrs(&interfaces);
+
   if (success == 0) {
     temp_addr = interfaces;
 
     while (temp_addr != NULL) {
-
-      // 👉 added: NULL safety check
       if (temp_addr->ifa_addr == NULL) {
         temp_addr = temp_addr->ifa_next;
         continue;
@@ -69,6 +68,7 @@ RCT_EXPORT_METHOD(getNetworkInfo : (RCTPromiseResolveBlock)
     (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeLanPortScannerSpecJSI>(params);
 }
+
 #endif
 
 @end
