@@ -9,7 +9,7 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(
                   getNetworkInfo:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  reject:(RCTPromiseRejectBlock)reject)
 {
 
     NSString *address = @"0.0.0.0";
