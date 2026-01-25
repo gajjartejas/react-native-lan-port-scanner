@@ -1,29 +1,21 @@
 package com.lanportscanner;
 
-import androidx.annotation.NonNull;
-
-import com.facebook.react.ReactPackage;
+import androidx.annotation.Nullable;
+import com.facebook.react.BaseReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
-
-import androidx.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.facebook.react.TurboReactPackage;
 import com.facebook.react.module.model.ReactModuleInfo;
 import com.facebook.react.module.model.ReactModuleInfoProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class LanPortScannerPackage extends TurboReactPackage {
+public class LanPortScannerPackage extends BaseReactPackage {
+
   @Nullable
   @Override
   public NativeModule getModule(String name, ReactApplicationContext reactContext) {
-    if (name.equals(LanPortScannerModule.NAME)) {
+    if (LanPortScannerModule.NAME.equals(name)) {
       return new LanPortScannerModule(reactContext);
     }
     return null;
@@ -33,18 +25,19 @@ public class LanPortScannerPackage extends TurboReactPackage {
   public ReactModuleInfoProvider getReactModuleInfoProvider() {
     return () -> {
       final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
-      boolean isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+
       moduleInfos.put(
+        LanPortScannerModule.NAME,
+        new ReactModuleInfo(
           LanPortScannerModule.NAME,
-          new ReactModuleInfo(
-              LanPortScannerModule.NAME,
-              LanPortScannerModule.NAME,
-              false, // canOverrideExistingModule
-              false, // needsEagerInit
-              false, // hasConstants
-              false, // isCxxModule
-              isTurboModule // isTurboModule
-          ));
+          LanPortScannerModule.NAME,
+          false, // canOverrideExistingModule
+          false, // needsEagerInit
+          false, // hasConstants
+          false  // 👉 isCxxModule (required, NOT deprecated)
+        )
+      );
+
       return moduleInfos;
     };
   }
