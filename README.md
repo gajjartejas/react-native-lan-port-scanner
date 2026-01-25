@@ -10,6 +10,7 @@ A simple port scanner for react native.
 <br>
 [![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)](https://www.android.com)
 [![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)](https://developer.apple.com/ios)
+[![New Architecture](https://img.shields.io/badge/new%20architecture-supported-brightgreen)](https://github.com/reactwg/react-native-new-architecture)
 
 ## Installation
 
@@ -30,17 +31,6 @@ after you have to install pods
 
 ```sh
 npx pod-install
-```
-
-## For Android
-
-You have to add below permission to `AndroidManifest.xml` file
-
-```xml
-
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 ```
 
 ## For iOS
