@@ -34,7 +34,8 @@ public class LanPortScannerPackage extends BaseReactPackage {
           false, // canOverrideExistingModule
           false, // needsEagerInit
           false, // hasConstants
-          false  // 👉 isCxxModule (required, NOT deprecated)
+          false,  // isCxxModule
+          true // isTurboModule
         )
       );
 
