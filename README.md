@@ -10,46 +10,34 @@ A simple port scanner for react native.
 <br>
 [![Platform - Android](https://img.shields.io/badge/platform-Android-3ddc84.svg?style=flat&logo=android)](https://www.android.com)
 [![Platform - iOS](https://img.shields.io/badge/platform-iOS-000.svg?style=flat&logo=apple)](https://developer.apple.com/ios)
+[![New Architecture](https://img.shields.io/badge/new%20architecture-supported-brightgreen)](https://github.com/reactwg/react-native-new-architecture)
 
 ## Installation
 
-This package requires [react-native-tcp](https://github.com/gajjartejas/react-native-tcp) as dependency. Please follow
-below steps to install:
+This package requires [react-native-tcp](https://github.com/gajjartejas/react-native-tcp) as a peer dependency.
 
 ```sh
-yarn add gajjartejas/react-native-tcp react-native-lan-port-scanner
+yarn add react-native-lan-port-scanner react-native-tcp
 ```
 
 or
 
 ```sh
-npm install gajjartejas/react-native-tcp react-native-lan-port-scanner
+npm install react-native-lan-port-scanner react-native-tcp
 ```
 
-after you have to install pods
+### iOS Setup
+
+After installing the packages, you need to install the pods:
 
 ```sh
 npx pod-install
 ```
 
-## For Android
-
-You have to add below permission to `AndroidManifest.xml` file
+Make sure you have added `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in your `info.plist` in case of insecure connections:
 
 ```xml
-
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-```
-
-## For iOS
-
-Make a sure you have to add `NSExceptionAllowsInsecureHTTPLoads` to `localhost` in case of insecure
-connection `info.plist`.
-
-```xml
-
+<key>NSAppTransportSecurity</key>
 <dict>
   <key>NSExceptionDomains</key>
   <dict>
@@ -69,68 +57,71 @@ connection `info.plist`.
 ```js
 import LanPortScanner, { LSScanConfig } from 'react-native-lan-port-scanner';
 
-//Returns `LSNetworkInfo`
+// Get current network info
 const networkInfo = await LanPortScanner.getNetworkInfo();
+
 const config1: LSScanConfig = {
   networkInfo: networkInfo,
-  ports: [80, 8085], //Specify port here
-  timeout: 1000, //Timeout for each thread in ms
-  threads: 150, //Number of threads
+  ports: [80, 8085], // Specify ports here
+  timeout: 1000,    // Timeout for each thread in ms
+  threads: 150,     // Number of threads
 };
 
-//OR
+// OR provide a specific IP range
 
 const ipRange = ['192.168.1.1', '192.168.1.112'];
-let config2: LSScanConfig = {
-  ipRange: ipRange, //If you provide this params then it will only scan provided ipRange.
-  ports: [80, 8085], //Specify port here
-  timeout: 1000, //Timeout for each thread in ms
-  threads: 150, //Number of threads
+const config2: LSScanConfig = {
+  ipRange: ipRange,  // It will only scan provided ipRange
+  ports: [80, 8085],
+  timeout: 1000,
+  threads: 150,
 };
 
-//Either config1 or config2 required
+// Start the scan
 const cancelScanHandle = LanPortScanner.startScan(
-  config1, //or config2
+  config1, // or config2
   (totalHosts: number, hostScanned: number) => {
-    console.log(hostScanned / totalHosts); //Show progress
+    console.log(`Progress: ${hostScanned / totalHosts}`);
   },
   (result) => {
-    console.log(result); //This will call after new ip/port found.
+    // result is LSSingleScanResult or null
+    if (result) {
+      console.log('Host found:', result);
+    }
   },
   (results) => {
-    console.log(results); // This will call after scan end.
+    // results is LSSingleScanResult[]
+    console.log('Scan finished. All found hosts:', results);
   }
 );
 
-//You can cancel scan later
+// You can cancel scan later
 setTimeout(() => {
   cancelScanHandle();
 }, 5000);
 ```
 
-### To scan specific host with port
+### Scan specific host with port
 
 ```js
-//Returns `LSSingleScanResult`
-let result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
+// Returns `LSSingleScanResult`
+const result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
 ```
 
-### To get network info
+### Get network info
 
 ```js
-//Returns `LSNetworkInfo`
+// Returns `LSNetworkInfo`
 const networkInfo = await LanPortScanner.getNetworkInfo();
 ```
 
 ## API
 
 - **Types:**
-
   - [`LSScanConfig`](#LSScanConfig)
   - [`LSNetworkInfo`](#lsnetworkinfo)
   - [`LSNetworkInfoExtra`](#lsnetworkinfoextra)
   - [`LSSingleScanResult`](#lssinglescanresult)
-  - [`LSScanResult`](#lsscanresult)
 
 - **Methods:**
   - [`getNetworkInfo()`](#getnetworkinfo)
@@ -142,19 +133,20 @@ const networkInfo = await LanPortScanner.getNetworkInfo();
 
 #### `LSScanConfig`
 
-Used to scan multiple hosts/ports.
+Used to configure the network scan.
 
-| Property      | Type                      | Description                                       |
-| ------------- | ------------------------- | ------------------------------------------------- |
-| `networkInfo` | `LSNetworkInfo`           | Contains ip address and subnet mask to scan.      |
-| `ports`       | `number[]` or `undefined` | Ports to scan, default: `[80, 443]`               |
-| `timeout`     | `number` or `undefined`   | Timeout for each thread in ms, default: `1000 ms` |
-| `threads`     | `number` or `undefined`   | Number of threads, default: `150`                 |
-| `logging`     | `boolean`                 | Enable or disable logging, default: `false`       |
+| Property      | Type                      | Description                                                  |
+| ------------- | ------------------------- | ------------------------------------------------------------ |
+| `networkInfo` | `LSNetworkInfo`           | Optional. Contains IP address and subnet mask to scan.       |
+| `ipRange`     | `string[]`                | Optional. Array of IP addresses to scan directly.            |
+| `ports`       | `number[]` or `undefined` | Ports to scan, default: `[80, 443]`                          |
+| `timeout`     | `number` or `undefined`   | Timeout for each connection attempt in ms, default: `1000 ms`|
+| `threads`     | `number` or `undefined`   | Number of concurrent threads, default: `50`                  |
+| `logging`     | `boolean`                 | Enable or disable logging, default: `false`                  |
 
 #### `LSNetworkInfo`
 
-Used to generate ip ranges for scanning.
+Basic network information.
 
 | Property     | Type     | Description |
 | ------------ | -------- | ----------- |
@@ -163,77 +155,58 @@ Used to generate ip ranges for scanning.
 
 #### `LSNetworkInfoExtra`
 
-Contains ip ranges for scanning purpose.
+Detailed network information including generated IP range.
 
 | Property       | Type             | Description                                                                        |
 | -------------- | ---------------- | ---------------------------------------------------------------------------------- |
 | `ipAddress`    | `string`         | IP Address                                                                         |
-| `subnetMask`   | `string`         | Subnet mask.                                                                       |
-| `subnetConv`   | `string or null` | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
-| `firstHost`    | `string`         | The network address for a given IPv4 interface and netmask in CIDR notation.       |
-| `lastHost `    | `string`         | The broadcast address for a given IPv4 interface and netmask in CIDR notation.     |
+| `subnetMask`   | `string`         | Subnet mask                                                                        |
+| `subnetConv`   | `number or null` | A CIDR prefix length for a valid IPv4 netmask or null if the netmask is not valid. |
+| `firstHost`    | `string`         | The network address for a given IPv4 interface and netmask.                        |
+| `lastHost`     | `string`         | The broadcast address for a given IPv4 interface and netmask.                      |
 | `firstHostHex` | `string`         | First host address in hex representation.                                          |
 | `lastHostHex`  | `string`         | Last host address in hex representation.                                           |
-| `ipRange`      | `string[]`       | Array of ip addresses.                                                             |
+| `ipRange`      | `string[]`       | Array of generated IP addresses.                                                   |
 
 #### `LSSingleScanResult`
 
-Returns after host/port found.
+Result of a successful port scan on a host.
 
 | Property | Type     | Description |
 | -------- | -------- | ----------- |
 | `ip`     | `string` | IP Address  |
-| `port`   | `number` | Subnet mask |
-
-#### `LSScanResult`
-
-Returns after scan complete.
-
-| Property | Type       | Description |
-| -------- | ---------- | ----------- |
-| `ip`     | `string`   | IP Address  |
-| `ports`  | `number[]` | Subnet mask |
+| `port`   | `number` | Port number |
 
 ### Methods
 
 #### `getNetworkInfo()`
 
-Returns `LSNetworkInfo` object.
-
-**Example:**
+Returns current network information.
 
 ```javascript
 const networkInfo = await LanPortScanner.getNetworkInfo();
 ```
 
-#### `getNetworkInfo()`
+#### `startScan(config, onProgress, onHostFound, onFinish)`
 
-Takes `LSNetworkInfo` and scan all hosts for specified ports.
+Starts scanning multiple hosts and ports based on the configuration.
 
-#### `generateIPRange()`
+#### `generateIPRange(info)`
 
-Takes `LSNetworkInfo`, generates ip address, ports array and return `LSNetworkInfoExtra` object.
-
-**Example:**
+Generates an array of IP addresses based on network info.
 
 ```javascript
 const networkInfo = await LanPortScanner.getNetworkInfo();
-const ipRangeInfo = generateIPRange(config.networkInfo);
+const ipRangeInfo = LanPortScanner.generateIPRange(networkInfo);
 ```
 
-#### `scanHost()`
+#### `scanHost(ip, port, timeout)`
 
-Scan single host with port, returns `LSSingleScanResult`
-
-**Example:**
+Scans a single host for a specific port.
 
 ```javascript
 const result = await LanPortScanner.scanHost('192.168.1.1', 80, 1000);
 ```
-
-## TODO
-- Better scan handling and canceling.
-- Add abort signal for cancelling.
 
 ## Contributing
 
@@ -245,15 +218,11 @@ MIT
 
 ## Credits
 
-[Shift8 Web](https://shift8web.ca/2019/03/how-to-build-a-port-scanner-with-javascript-using-react-native/) for awsome
-tutorial.
-
-[react-native-netinfo](https://github.com/react-native-netinfo/react-native-netinfo) by [The React Native Community
-](https://reactnative.dev/help)
-
-<a href="https://www.flaticon.com/free-icons/local-area" title="local area icons">Local area icons created by Eucalyp -
-Flaticon</a>
+- [Shift8 Web](https://shift8web.ca/2019/03/how-to-build-a-port-scanner-with-javascript-using-react-native/) for the original tutorial.
+- [react-native-netinfo](https://github.com/react-native-netinfo/react-native-netinfo) by [The React Native Community](https://reactnative.dev/help).
+- [Local area icons](https://www.flaticon.com/free-icons/local-area) created by Eucalyp - Flaticon.
 
 ---
 
 Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
+

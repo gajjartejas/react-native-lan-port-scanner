@@ -1,28 +1,45 @@
 package com.lanportscanner;
 
-import androidx.annotation.NonNull;
-
-import com.facebook.react.ReactPackage;
+import androidx.annotation.Nullable;
+import com.facebook.react.BaseReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.module.model.ReactModuleInfo;
+import com.facebook.react.module.model.ReactModuleInfoProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class LanPortScannerPackage implements ReactPackage {
-  @NonNull
+public class LanPortScannerPackage extends BaseReactPackage {
+
+  @Nullable
   @Override
-  public List<NativeModule> createNativeModules(@NonNull ReactApplicationContext reactContext) {
-    List<NativeModule> modules = new ArrayList<>();
-    modules.add(new LanPortScannerModule(reactContext));
-    return modules;
+  public NativeModule getModule(String name, ReactApplicationContext reactContext) {
+    if (LanPortScannerModule.NAME.equals(name)) {
+      return new LanPortScannerModule(reactContext);
+    }
+    return null;
   }
 
-  @NonNull
   @Override
-  public List<ViewManager> createViewManagers(@NonNull ReactApplicationContext reactContext) {
-    return Collections.emptyList();
+  public ReactModuleInfoProvider getReactModuleInfoProvider() {
+    return () -> {
+      final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
+
+      moduleInfos.put(
+        LanPortScannerModule.NAME,
+        new ReactModuleInfo(
+          LanPortScannerModule.NAME,
+          LanPortScannerModule.NAME,
+          false, // canOverrideExistingModule
+          false, // needsEagerInit
+          false, // hasConstants
+          false,  // isCxxModule
+          true // isTurboModule
+        )
+      );
+
+      return moduleInfos;
+    };
   }
 }
