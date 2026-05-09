@@ -42,7 +42,10 @@
     "scanner",
     "port"
   ],
-  "repository": "https://github.com/gajjartejas/react-native-lan-port-scanner",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gajjartejas/react-native-lan-port-scanner.git"
+  },
   "author": "gajjartejas <gajjartejas26@gmail.com> (https://github.com/gajjartejas)",
   "license": "MIT",
   "bugs": {
