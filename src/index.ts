@@ -61,11 +61,11 @@ const startScan = (
   if (!config.networkInfo && !config.ipRange) {
     if (config.logging) {
       console.error(
-        'startScan->config->either networkInfo.networkInfo or networkInfo.ipRange param is required.'
+        'startScan->config->either config.networkInfo or config.ipRange param is required.'
       );
     }
     throw new Error(
-      'either networkInfo.networkInfo or networkInfo.ipRange param is required.'
+      'either config.networkInfo or config.ipRange param is required.'
     );
   }
 

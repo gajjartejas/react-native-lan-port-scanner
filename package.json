@@ -86,7 +86,8 @@
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": "*",
+    "react-native-tcp": "*"
   },
   "workspaces": [
     "example"
@@ -100,6 +101,9 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/node_modules",
       "<rootDir>/lib/"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-?|react-native|@react-native|react-native-tcp)/)"
     ]
   },
   "commitlint": {
