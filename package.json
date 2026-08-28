@@ -1,6 +1,6 @@
 {
   "name": "react-native-lan-port-scanner",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "A simple port scanner for react native.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -102,7 +102,7 @@
   "jest": {
     "preset": "react-native",
     "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
+      "<rootDir>/example",
       "<rootDir>/lib/"
     ],
     "transformIgnorePatterns": [

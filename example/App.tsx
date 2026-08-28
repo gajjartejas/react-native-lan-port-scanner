@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 
 import LanPortScanner, {
-  CancelScan,
-  LSScanConfig,
-  LSSingleScanResult,
+  type CancelScan,
+  type LSScanConfig,
+  type LSSingleScanResult,
 } from 'react-native-lan-port-scanner';
 
 const Section: React.FC<{
