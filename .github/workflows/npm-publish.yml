@@ -17,7 +17,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - run: npm ci
 
@@ -35,11 +35,11 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org/
 
-      - run: npm ci
+      - run: npm install -g npm@latest
 
-      - run: npm config delete //registry.npmjs.org/:_authToken || true
+      - run: npm ci
 
       - run: npm publish --provenance --access public
