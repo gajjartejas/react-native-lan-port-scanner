@@ -21,11 +21,11 @@ if (isNewArchitectureEnabled()) {
   apply plugin: "com.facebook.react"
 }
 
-def getExtOrDefault(name, fallback) {
+def getExtOrDefault(name, fallback = null) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["LanPortScanner_" + name] ?: fallback)
 }
 
-def getExtOrIntegerDefault(name, fallback) {
+def getExtOrIntegerDefault(name, fallback = 0) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["LanPortScanner_" + name] ? project.properties["LanPortScanner_" + name].toInteger() : fallback)
 }
 
@@ -52,8 +52,8 @@ android {
   compileSdkVersion getExtOrIntegerDefault("compileSdkVersion", 34)
 
   defaultConfig {
-    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
-    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+    minSdkVersion getExtOrIntegerDefault("minSdkVersion", 21)
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion", 34)
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
   }
 
