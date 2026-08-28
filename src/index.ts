@@ -24,7 +24,25 @@ const getNetworkInfo = (): Promise<Types.LSNetworkInfo> => {
 const generateIPRange = (
   info: Types.LSNetworkInfo
 ): Types.LSNetworkInfoExtra => {
-  const { subnetMask, ipAddress } = info;
+  const { subnetMask, ipAddress } = info || {};
+
+  if (
+    !subnetMask ||
+    !ipAddress ||
+    ipAddress === '0.0.0.0' ||
+    subnetMask === '0.0.0.0'
+  ) {
+    return {
+      subnetConv: 0,
+      firstHost: '0.0.0.0',
+      lastHost: '0.0.0.0',
+      firstHostHex: '',
+      lastHostHex: '',
+      ipRange: [],
+      ipAddress: ipAddress || '0.0.0.0',
+      subnetMask: subnetMask || '0.0.0.0',
+    };
+  }
 
   const subconv = ipaddr.IPv4.parse(subnetMask).prefixLengthFromSubnetMask();
 
@@ -75,6 +93,19 @@ const startScan = (
     ipRange = config.ipRange;
   } else if (config.networkInfo) {
     ipRange = generateIPRange(config.networkInfo).ipRange;
+  }
+
+  if (ipRange.length === 0) {
+    if (logging) {
+      console.warn(
+        '[LanPortScanner] IP range is empty. No hosts to scan (check WiFi/network connection).'
+      );
+    }
+    setTimeout(() => {
+      onProgress(0, 0);
+      onFinish([]);
+    }, 0);
+    return () => {};
   }
 
   const ports = config.ports ? config.ports : [80, 443];
