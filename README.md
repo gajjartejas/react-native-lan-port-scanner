@@ -17,13 +17,13 @@ A simple port scanner for react native.
 This package requires [react-native-tcp](https://github.com/gajjartejas/react-native-tcp) as a peer dependency.
 
 ```sh
-yarn add react-native-lan-port-scanner github:gajjartejas/react-native-lan-port-scanner
+yarn add react-native-lan-port-scanner github:gajjartejas/react-native-tcp
 ```
 
 or
 
 ```sh
-npm install react-native-lan-port-scanner github:gajjartejas/react-native-lan-port-scanner
+npm install react-native-lan-port-scanner github:gajjartejas/react-native-tcp
 ```
 
 ### iOS Setup
